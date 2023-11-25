@@ -1,0 +1,32 @@
+const int buttonPin = 4; 
+int buttonState = 0;
+void setup() {
+  Serial.begin(115200); 
+  pinMode(buttonPin, INPUT);
+  for(int i =16 ; i<=19; i++){
+    pinMode(i,OUTPUT);
+  }
+}
+void led_left(){
+  for(int i = 16; i<=19;i++){
+      digitalWrite(i,HIGH);
+      delay(1000);
+      digitalWrite(i,LOW);
+  }
+}
+void led_lnverse(){
+  for(int i = 19; i>=16;i--){
+      digitalWrite(i,HIGH);
+      delay(1000);
+      digitalWrite(i,LOW);
+  }
+}
+void loop() {
+  buttonState = digitalRead(buttonPin);
+  Serial.println(buttonState);
+  if(buttonState == HIGH){
+    led_lnverse();
+  } else {
+    led_left();
+  }
+}
