@@ -1,0 +1,45 @@
+#include <stdexcept>
+const int LED_PIN_1 = 5; // หมายเลขขาที่ต่อกับ LED 1
+const int LDR_PIN = 12; // หมายเลขขาที่ต่อกับ LDR Sensor
+void setup() {
+  pinMode(LED_PIN_1, OUTPUT);
+  pinMode(LDR_PIN, INPUT);
+  Serial.begin(9600);
+}
+void loop() {
+  try {
+    int sensorValue = readLDR();
+    controlLEDs(sensorValue);
+  } catch (const std::exception& e) {
+    Serial.print("Error: ");
+    Serial.println(e.what());
+    cleanup();
+  }
+  delay(1000);
+}
+
+int readLDR() {
+  int sensorValue = analogRead(LDR_PIN);
+  if (sensorValue < 0 || sensorValue > 10230) {
+    throw std::out_of_range("LDR Sensor value out of range");
+  }
+  return sensorValue;
+}
+void controlLEDs(int sensorValue) {
+  if(sensorValue <= 40){
+    sensorValue = 0;
+  }
+  Serial.println(sensorValue);
+  turnOnLED(LED_PIN_1,sensorValue);
+}
+void turnOnLED(int pin,int light) {
+  light = light/16;
+  analogWrite(pin, light);
+}
+void turnOffLED(int pin) {
+  analogWrite(pin, 0);
+}
+void cleanup() {
+  turnOffLED(LED_PIN_1);
+  Serial.end();
+}
